@@ -1,0 +1,72 @@
+<html>
+<body>
+<canvas width="500" height="500" id="canvas"></canvas>
+<script>
+//initialize data set
+var data = [100, 68, 20, 30, 100];
+
+//get a reference to the canvas
+var canvas = document.getElementById('canvas');
+
+//geta  reference to the drawing context
+var c = canvas.getContext('2d');
+
+//draw background
+c.fillStyle = "white";
+c.fillRect(0, 0, 500, 500);
+
+//list of colors
+var colors = ["orange", "green", "blue", "yellow", "teal"];
+
+//calculate total of all data
+var total = 0;
+for (var i = 0; i < data.length; i++) {
+  total += data[i];
+}
+
+//draw pie data
+var prevAngle = 0;
+for (var i = 0; i < data.length; i++) {
+  //fraction that this pieslice represents
+  var fraction = data[i]/total;
+
+  //calc starting angle (2pi convers degree to radians, in this cas the fraction is like degree/360degrees)
+  var angle = prevAngle + fraction * Math.PI * 2;
+
+  //draw the pie slice
+  c.fillStyle = colors[i];
+
+  //fill with a radial gradient
+  //(x0,y0,r0,x1,y1,r1) = (starting-x, starting-y, radius, ending x, endying y, radius of ending)
+  var grad = c.createRadialGradient(250, 250, 10, 250, 250, 100);
+  grad.addColorStop(0, "white"); //0 represents position between start and end (1) of gradient
+  grad.addColorStop(1, colors[i]);
+  c.fillStyle = grad;
+
+  //create a path arc(x,y,r,sAngle,eAngle,counterclockwise = false is default meaining clockwise, true = counterclockwise)
+  c.beginPath();
+  c.moveTo(250, 250); //center of circle
+  c.arc(250, 250, 100, prevAngle, angle, false);
+  c.lineTo(250, 250);
+
+  //fill it
+  c.fill();
+
+  //stroke it
+  c.strokeStyle = "black";
+  c.stroke();
+
+  //update for next time through the loop
+  prevAngle = angle;
+}
+
+//draw centered text
+c.fillStyle = "black";
+c.font = "24pt sans-serif";
+var text = "Sales Data from 2025";
+var metrics = c.measureText(text);
+c.fillText(text, 250 - metrics.width / 2, 400);
+
+</script>
+</body>
+</html>
